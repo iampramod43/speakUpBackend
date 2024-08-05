@@ -9,7 +9,7 @@ const port = process.env.PORT || 4001;
 
 // Use cors middleware
 app.use(cors({
-    origin: ['http://localhost:3000'], // Add your domain here
+    origin: ['http://localhost:3000', 'https://speakupbackend.onrender.com'], // Add your domain here
     credentials: true, // Enable cookies in requests
 }));
 connectDb();
