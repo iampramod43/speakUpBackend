@@ -5,12 +5,17 @@ const multer = require('multer');
 const authMiddleware = require('../middleware/auth');
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    const dir = 'uploads/';
+    console.log(`Saving file to: ${dir}`);
+    cb(null, dir);
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
+    const filename = Date.now() + '-' + file.originalname;
+    console.log(`Saving file as: ${filename}`);
+    cb(null, filename);
   }
 });
+
 const upload = multer({ storage: storage });
 router.post('/create', upload.array('attachments'), issueController.createIssue);
 router.get('/get', issueController.getIssues);
