@@ -9,7 +9,7 @@ const port = process.env.PORT || 4001;
 
 // Use cors middleware
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://speakupbackend.onrender.com'], // Add your domain here
+    origin: ['http://localhost:3000', 'https://speakupbackend.onrender.com', 'https://speakup-fe.vercel.app/dashboard', 'https://speakup-9l69a9cv9-pramods-projects-4bf8084c.vercel.app'], // Add your domain here
     credentials: true, // Enable cookies in requests
 }));
 connectDb();
