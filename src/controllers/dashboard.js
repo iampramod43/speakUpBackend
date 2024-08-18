@@ -11,12 +11,14 @@ const formatDateToMonth = (date) => {
 // 1. Line Chart - Number of issues vs month
 const lineChart = async (req, res) => {
   try {
+    const orgId = req.query.orgId;
+
+
     const issues = await issueService.aggregate([
+      { $match: { oid: orgId } }, // Filter documents by orgId
       { $group: { _id: { $month: "$created_at" }, count: { $sum: 1 } } },
       { $sort: { "_id": 1 } }
     ]);
-
-    console.log("🚀 ~ file: dashboard.js:19 ~ lineChart ~ issues:", issues);
 
     const chartData = issues.map(issue => ({
       month: formatDateToMonth(issue._id),
@@ -28,13 +30,21 @@ const lineChart = async (req, res) => {
   }
 };
 
+
 // 2. Bar Chart - Number of issues vs month
 const barChart = async (req, res) => {
   try {
+    const orgId = req.query.orgId;
+    
+
     const issues = await issueService.aggregate([
+      { $match: { oid: orgId } }, // Filter documents by orgId
       { $group: { _id: { $month: "$created_at" }, count: { $sum: 1 } } },
       { $sort: { "_id": 1 } }
     ]);
+
+    console.log("🚀 ~ file: dashboard.js:46 ~ barChart ~ issues:", issues);
+
     const chartData = issues.map(issue => ({
       month: formatDateToMonth(issue._id),
       count: issue.count
@@ -48,7 +58,9 @@ const barChart = async (req, res) => {
 // 3. Pie Chart - Issues with categories
 const pieChart = async (req, res) => {
   try {
+    const orgId = req.query.orgId;
     const issues = await issueService.aggregate([
+      { $match: { oid: orgId } }, // Filter documents by orgId
       { $group: { _id: "$category", count: { $sum: 1 } } },
       { $sort: { count: -1 } }
     ]);
@@ -65,7 +77,9 @@ const pieChart = async (req, res) => {
 // 4. Area Chart Stacked - Number of issues in each category vs month
 const areaChart = async (req, res) => {
   try {
+    const orgId = req.query.orgId;
     const issues = await issueService.aggregate([
+      { $match: { oid: orgId } }, // Filter documents by orgId
       { $group: { _id: { month: { $month: "$created_at" }, category: "$category" }, count: { $sum: 1 } } },
       { $sort: { "_id.month": 1, "_id.category": 1 } }
     ]);
@@ -92,10 +106,11 @@ const areaChart = async (req, res) => {
 // 5. Radar Chart - Total issues last 6 months
 const radarChart = async (req, res) => {
   try {
+    const orgId = req.query.orgId;
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
     const issues = await issueService.aggregate([
-      { $match: { created_at: { $gte: sixMonthsAgo } } },
+      { $match: { created_at: { $gte: sixMonthsAgo }, oid: orgId } },
       { $group: { _id: { $month: "$created_at" }, count: { $sum: 1 } } },
       { $sort: { "_id": 1 } }
     ]);
@@ -112,10 +127,11 @@ const radarChart = async (req, res) => {
 // 6. Radial Chart - Total number of issues last 6 months
 const radialChart = async (req, res) => {
   try {
+    const orgId = req.query.orgId;
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
     const issues = await issueService.aggregate([
-      { $match: { created_at: { $gte: sixMonthsAgo } } },
+      { $match: { created_at: { $gte: sixMonthsAgo }, oid: orgId } },
       { $group: { _id: null, count: { $sum: 1 } } }
     ]);
     const chartData = {
