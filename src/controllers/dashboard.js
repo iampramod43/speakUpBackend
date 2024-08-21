@@ -110,7 +110,7 @@ const radarChart = async (req, res) => {
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
     const issues = await issueService.aggregate([
-      { $match: { created_at: { $gte: sixMonthsAgo }, oid: orgId } },
+      { $match: { created_at: { $gte: sixMonthsAgo }, oid: orgId, status: 'resolved' } },
       { $group: { _id: { $month: "$created_at" }, count: { $sum: 1 } } },
       { $sort: { "_id": 1 } }
     ]);
@@ -131,7 +131,7 @@ const radialChart = async (req, res) => {
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
     const issues = await issueService.aggregate([
-      { $match: { created_at: { $gte: sixMonthsAgo }, oid: orgId } },
+      { $match: { created_at: { $gte: sixMonthsAgo }, oid: orgId, status: 'resolved' } },
       { $group: { _id: null, count: { $sum: 1 } } }
     ]);
     const chartData = {
